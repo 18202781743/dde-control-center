@@ -113,7 +113,7 @@
     </message>
 </context>
 <context>
-    <name>AddFingeDialog</name>
+    <name>AddFingerDialog</name>
     <message>
         <source>Cancel</source>
         <translation>取消</translation>
@@ -926,7 +926,7 @@
     <name>dccV23::CustomAddAvatarWidget</name>
     <message>
         <source>You have not uploaded a picture, you can click or drag to upload a picture</source>
-        <translation>您还没有上传过头像，可点击或拖搜上传图片</translation>
+        <translation>您还没有上传过头像，可点击或拖拽上传图片</translation>
     </message>
     <message>
         <source>Uploaded file type is incorrect, please upload again</source>
@@ -2486,24 +2486,28 @@ UnionTech Software is committed to research and improve the security, accuracy a
         <translation>低电量时自动开启</translation>
     </message>
     <message>
-        <source>Auto power saving on battery</source>
-        <translation>使用电池时自动开启</translation>
-    </message>
-    <message>
         <source>Decrease Brightness</source>
         <translation>自动降低亮度</translation>
+    </message>
+    <message>
+        <source>Low battery threshold</source>
+        <translation>低电量阈值</translation>
+    </message>
+    <message>
+        <source>Auto power saving on battery</source>
+        <translation>使用电池时自动开启</translation>
     </message>
     <message>
         <source>Wakeup Settings</source>
         <translation>唤醒设置</translation>
     </message>
     <message>
-        <source>Password is required to wake up the computer</source>
-        <translation>待机恢复时需要密码</translation>
+        <source>Unlocking is required to wake up the computer</source>
+        <translation>待机恢复时需要解锁</translation>
     </message>
     <message>
-        <source>Password is required to wake up the monitor</source>
-        <translation>唤醒显示器时需要密码</translation>
+        <source>Unlocking is required to wake up the monitor</source>
+        <translation>唤醒显示器时需要解锁</translation>
     </message>
 </context>
 <context>
@@ -3238,6 +3242,14 @@ UnionTech Software is committed to research and improve the security, accuracy a
     <message>
         <source>Output</source>
         <translation>输出</translation>
+    </message>
+    <message>
+        <source>Auto pause</source>
+        <translation>插拔管理</translation>
+    </message>
+    <message>
+        <source>Whether the audio will be automatically paused when the current audio device is unplugged</source>
+        <translation>外设插拔时音频输出是否自动暂停</translation>
     </message>
     <message>
         <source>Input</source>

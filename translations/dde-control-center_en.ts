@@ -115,7 +115,7 @@
     </message>
 </context>
 <context>
-    <name>AddFingeDialog</name>
+    <name>AddFingerDialog</name>
     <message>
         <source>Cancel</source>
         <translation type="unfinished"></translation>
@@ -2474,11 +2474,15 @@ UnionTech Software is committed to research and improve the security, accuracy a
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Auto power saving on battery</source>
+        <source>Decrease Brightness</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Decrease Brightness</source>
+        <source>Low battery threshold</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Auto power saving on battery</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -2486,11 +2490,11 @@ UnionTech Software is committed to research and improve the security, accuracy a
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Password is required to wake up the computer</source>
+        <source>Unlocking is required to wake up the computer</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Password is required to wake up the monitor</source>
+        <source>Unlocking is required to wake up the monitor</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -3225,6 +3229,14 @@ UnionTech Software is committed to research and improve the security, accuracy a
     <name>SoundPlugin</name>
     <message>
         <source>Output</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Auto pause</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Whether the audio will be automatically paused when the current audio device is unplugged</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

@@ -80,6 +80,9 @@ public:
     inline int powerSavingModeLowerBrightnessThreshold() const { return m_dPowerSavingModeLowerBrightnessThreshold; }
     void setPowerSavingModeLowerBrightnessThreshold(uint dPowerSavingModeLowerBrightnessThreshold);
 
+    inline int powerSavingModeAutoBatteryPercentage() const { return m_dPowerSavingModeAutoBatteryPercentage; }
+    void setPowerSavingModeAutoBatteryPercentage(uint dPowerSavingModeAutoBatteryPercentage);
+
     inline int linePowerPressPowerBtnAction() const { return m_nLinePowerPressPowerBtnAction; }
     void setLinePowerPressPowerBtnAction(int nLinePowerPressPowerBtnAction);
 
@@ -120,6 +123,12 @@ public:
     inline bool isHighPerformanceSupported() const { return m_isHighPerformanceSupported; }
     void setHighPerformanceSupported(bool isHighSupport);
 
+    // ----
+    inline bool isNoPasswdLogin() const { return m_noPasswdLogin; }
+
+    void setNoPasswdLogin(bool value);
+
+
 Q_SIGNALS:
     void sleepLockChanged(const bool sleepLock);
     void canSleepChanged(const bool canSleep);
@@ -146,6 +155,7 @@ Q_SIGNALS:
     void powerSavingModeAutoWhenQuantifyLowChanged(const bool state);
     void powerSavingModeAutoChanged(const bool state);
     void powerSavingModeLowerBrightnessThresholdChanged(const uint level);
+    void powerSavingModeAutoBatteryPercentageChanged(const uint level);
     //electric
     void linePowerPressPowerBtnActionChanged(const int reply);
     void linePowerLidClosedActionChanged(const int reply);
@@ -159,6 +169,8 @@ Q_SIGNALS:
     void suspendChanged(bool suspendState);
     void powerPlanChanged(const QString &value);
     void highPerformaceSupportChanged(bool value);
+
+    void noPasswdLoginChanged(bool value);
 
 private:
     bool m_lidPresent; //以此判断是否为笔记本
@@ -184,6 +196,7 @@ private:
     bool m_bPowerSavingModeAutoWhenQuantifyLow;
     bool m_bPowerSavingModeAuto;
     uint m_dPowerSavingModeLowerBrightnessThreshold;
+    uint m_dPowerSavingModeAutoBatteryPercentage;
     int m_nLinePowerPressPowerBtnAction;
     int m_nLinePowerLidClosedAction;
     int m_nBatteryPressPowerBtnAction;
@@ -198,6 +211,9 @@ private:
 
     QString m_powerPlan;
     bool m_isHighPerformanceSupported;
+
+    // Account
+    bool m_noPasswdLogin;
 };
 
 #endif // POWERMODEL_H

@@ -22,6 +22,7 @@ PowerWorker::PowerWorker(PowerModel *model, QObject *parent)
     , m_powerModel(model)
     , m_powerDBusProxy(new PowerDBusProxy(this))
 {
+    connect(m_powerDBusProxy, &PowerDBusProxy::noPasswdLoginChanged, m_powerModel, &PowerModel::setNoPasswdLogin);
     connect(m_powerDBusProxy, &PowerDBusProxy::ScreenBlackLockChanged, m_powerModel, &PowerModel::setScreenBlackLock);
     connect(m_powerDBusProxy, &PowerDBusProxy::SleepLockChanged, m_powerModel, &PowerModel::setSleepLock);
     connect(m_powerDBusProxy, &PowerDBusProxy::LidIsPresentChanged, m_powerModel, &PowerModel::setLidPresent);
@@ -44,6 +45,7 @@ PowerWorker::PowerWorker(PowerModel *model, QObject *parent)
     connect(m_powerDBusProxy, &PowerDBusProxy::PowerSavingModeAutoWhenBatteryLowChanged, m_powerModel, &PowerModel::setPowerSavingModeAutoWhenQuantifyLow);
     connect(m_powerDBusProxy, &PowerDBusProxy::PowerSavingModeAutoChanged, m_powerModel, &PowerModel::setPowerSavingModeAuto);
     connect(m_powerDBusProxy, &PowerDBusProxy::PowerSavingModeBrightnessDropPercentChanged, m_powerModel, &PowerModel::setPowerSavingModeLowerBrightnessThreshold);
+    connect(m_powerDBusProxy, &PowerDBusProxy::PowerSavingModeAutoBatteryPercentChanged, m_powerModel, &PowerModel::setPowerSavingModeAutoBatteryPercentage);
     connect(m_powerDBusProxy, &PowerDBusProxy::LinePowerPressPowerBtnActionChanged, m_powerModel, &PowerModel::setLinePowerPressPowerBtnAction);
     connect(m_powerDBusProxy, &PowerDBusProxy::LinePowerLidClosedActionChanged, m_powerModel, &PowerModel::setLinePowerLidClosedAction);
     connect(m_powerDBusProxy, &PowerDBusProxy::BatteryPressPowerBtnActionChanged, m_powerModel, &PowerModel::setBatteryPressPowerBtnAction);
@@ -69,6 +71,7 @@ void PowerWorker::active()
     m_powerModel->setSleepOnLidOnPowerClose(m_powerDBusProxy->lidClosedSleep());
     m_powerModel->setHaveBettary(m_powerDBusProxy->hasBattery());
     m_powerModel->setPowerSavingModeAutoWhenQuantifyLow(m_powerDBusProxy->powerSavingModeAutoWhenBatteryLow());
+    m_powerModel->setPowerSavingModeAutoBatteryPercentage(m_powerDBusProxy->powerSavingModeAutoBatteryPercent());
     m_powerModel->setPowerSavingModeLowerBrightnessThreshold(m_powerDBusProxy->powerSavingModeBrightnessDropPercent());
     m_powerModel->setLowPowerNotifyEnable(m_powerDBusProxy->lowPowerNotifyEnable());
     m_powerModel->setLowPowerAutoSleepThreshold(m_powerDBusProxy->lowPowerAutoSleepThreshold());
@@ -78,6 +81,8 @@ void PowerWorker::active()
     m_powerModel->setBatteryPressPowerBtnAction(m_powerDBusProxy->batteryPressPowerBtnAction());
     m_powerModel->setBatteryLidClosedAction(m_powerDBusProxy->batteryLidClosedAction());
     m_powerModel->setPowerPlan(m_powerDBusProxy->mode());
+
+    m_powerModel->setNoPasswdLogin(m_powerDBusProxy->noPasswdLogin());
 
     setHighPerformanceSupported(m_powerDBusProxy->isHighPerformanceSupported());
 
@@ -212,6 +217,11 @@ void PowerWorker::setPowerSavingModeAuto(bool bAutoIntoSaveEnergyMode)
 void PowerWorker::setPowerSavingModeLowerBrightnessThreshold(uint dPowerSavingModeLowerBrightnessThreshold)
 {
     m_powerDBusProxy->setPowerSavingModeBrightnessDropPercent(dPowerSavingModeLowerBrightnessThreshold);
+}
+
+void PowerWorker::setPowerSavingModeAutoBatteryPercentage(uint dPowerSavingModeBatteryPercentage)
+{
+    m_powerDBusProxy->setPowerSavingModeAutoBatteryPercent(dPowerSavingModeBatteryPercentage);
 }
 
 void PowerWorker::setLinePowerPressPowerBtnAction(int nLinePowerPressPowerBtnAction)

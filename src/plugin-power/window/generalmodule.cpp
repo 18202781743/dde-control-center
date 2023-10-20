@@ -14,6 +14,7 @@
 #include <titledslideritem.h>
 
 #include <DComboBox>
+#include <DIconTheme>
 #include <DListView>
 #include <DSwitchButton>
 
@@ -22,10 +23,11 @@
 #define POWERSAVE "powersave"     // 节能模式
 
 using namespace DCC_NAMESPACE;
+DGUI_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
 
 GeneralModule::GeneralModule(PowerModel *model, PowerWorker *work, QObject *parent)
-    : PageModule("general", tr("General"), QIcon::fromTheme("dcc_general_purpose"), parent)
+    : PageModule("general", tr("General"), DIconTheme::findQIcon("dcc_general_purpose"), parent)
     , m_model(model)
     , m_work(work)
 {
@@ -57,6 +59,10 @@ GeneralModule::GeneralModule(PowerModel *model, PowerWorker *work, QObject *pare
             &GeneralModule::requestSetPowerSavingModeLowerBrightnessThreshold,
             m_work,
             &PowerWorker::setPowerSavingModeLowerBrightnessThreshold);
+    connect(this,
+            &GeneralModule::requestSetPowerSavingModeAutoBatteryPercentage,
+            m_work,
+            &PowerWorker::setPowerSavingModeAutoBatteryPercentage);
     connect(this, &GeneralModule::requestSetPowerPlan, m_work, &PowerWorker::setPowerPlan);
     initUI();
 }
@@ -196,7 +202,52 @@ void GeneralModule::initUI()
             itemAutoPowerSavingOnLowBattery,
             &ItemModule::setVisible);
     group->appendChild(itemAutoPowerSavingOnLowBattery);
+    ItemModule *itemAutoPowerSavingOnBatterySlider = new ItemModule(
+            "decreaseBrightness",
+            tr("Decrease Brightness"),
+            [this](ModuleObject *module) -> QWidget * {
+                Q_UNUSED(module)
+                TitledSliderItem *sldLowerBrightness =
+                        new TitledSliderItem(tr("Low battery threshold"));
+                QStringList annotions;
+                annotions << "10%"
+                          << "20%"
+                          << "30%"
+                          << "40%"
+                          << "50%";
+                sldLowerBrightness->setAnnotations(annotions);
+                sldLowerBrightness->slider()->setRange(1, 5);
+                sldLowerBrightness->slider()->setPageStep(10);
+                sldLowerBrightness->slider()->setType(DCCSlider::Vernier);
+                sldLowerBrightness->slider()->setTickPosition(QSlider::NoTicks);
+                sldLowerBrightness->slider()->setValue(m_model->powerSavingModeAutoBatteryPercentage() / 10);
 
+                sldLowerBrightness->setValueLiteral(
+                        QString("%1%").arg(m_model->powerSavingModeAutoBatteryPercentage()));
+                connect(m_model,
+                        &PowerModel::powerSavingModeAutoBatteryPercentageChanged,
+                        sldLowerBrightness,
+                        [sldLowerBrightness](const uint dLevel) {
+                            sldLowerBrightness->slider()->blockSignals(true);
+                            sldLowerBrightness->slider()->setValue(dLevel / 10);
+                            sldLowerBrightness->slider()->blockSignals(false);
+                        });
+                connect(sldLowerBrightness->slider(),
+                        &DCCSlider::valueChanged,
+                        this,
+                        [=](int value) {
+                            sldLowerBrightness->setValueLiteral(annotions[value - 1]);
+                            Q_EMIT requestSetPowerSavingModeAutoBatteryPercentage(value * 10);
+                        });
+                return sldLowerBrightness;
+            },
+            false);
+    itemAutoPowerSavingOnBatterySlider->setVisible(m_model->haveBettary());
+    group->appendChild(itemAutoPowerSavingOnBatterySlider);
+    connect(m_model,
+            &PowerModel::haveBettaryChanged,
+            itemAutoPowerSavingOnBatterySlider,
+            &ItemModule::setVisible);
     ItemModule *itemAutoPowerSavingOnBattery =
             new ItemModule("autoPowerSavingOnBattery",
                            tr("Auto power saving on battery"),
@@ -269,44 +320,63 @@ void GeneralModule::initUI()
     appendChild(new TitleModule("wakeupSettingsTitle", tr("Wakeup Settings")));
     group = new SettingsGroupModule("wakeupSettingsGroup", tr("Wakeup Settings"));
     appendChild(group);
-    group->appendChild(
-            new ItemModule("passwordIsRequiredToWakeUpTheComputer",
-                           tr("Password is required to wake up the computer"),
-                           [this](ModuleObject *module) -> QWidget * {
-                               Q_UNUSED(module)
-                               DSwitchButton *wakeComputerNeedPassword = new DSwitchButton();
-                               wakeComputerNeedPassword->setChecked(m_model->sleepLock());
-                               wakeComputerNeedPassword->setVisible(
-                                       m_model->canSuspend() && m_model->getSuspend()); // 配置显示
-                               connect(m_model,
-                                       &PowerModel::sleepLockChanged,
-                                       wakeComputerNeedPassword,
-                                       &DSwitchButton::setChecked);
-                               connect(m_model,
-                                       &PowerModel::suspendChanged,
-                                       wakeComputerNeedPassword,
-                                       &DSwitchButton::setVisible);
-                               connect(wakeComputerNeedPassword,
-                                       &DSwitchButton::checkedChanged,
-                                       this,
-                                       &GeneralModule::requestSetWakeComputer);
-                               return wakeComputerNeedPassword;
-                           }));
+    group->appendChild(new ItemModule(
+            "passwordIsRequiredToWakeUpTheComputer",
+            tr("Unlocking is required to wake up the computer"),
+            [this](ModuleObject *module) -> QWidget * {
+                Q_UNUSED(module)
+                DSwitchButton *wakeComputerNeedPassword = new DSwitchButton();
+                wakeComputerNeedPassword->setChecked(m_model->sleepLock()
+                                                     && !m_model->isNoPasswdLogin());
+                wakeComputerNeedPassword->setDisabled(m_model->isNoPasswdLogin());
+                wakeComputerNeedPassword->setVisible(m_model->canSuspend()
+                                                     && m_model->getSuspend()); // 配置显示
+                connect(m_model,
+                        &PowerModel::sleepLockChanged,
+                        wakeComputerNeedPassword,
+                        [wakeComputerNeedPassword, this](bool checked) {
+                            wakeComputerNeedPassword->setChecked(checked
+                                                                 && !m_model->isNoPasswdLogin());
+                        });
+                connect(m_model,
+                        &PowerModel::suspendChanged,
+                        wakeComputerNeedPassword,
+                        &DSwitchButton::setVisible);
+                connect(wakeComputerNeedPassword,
+                        &DSwitchButton::checkedChanged,
+                        this,
+                        &GeneralModule::requestSetWakeComputer);
+                connect(m_model,
+                        &PowerModel::noPasswdLoginChanged,
+                        wakeComputerNeedPassword,
+                        &DSwitchButton::setDisabled);
+                return wakeComputerNeedPassword;
+            }));
     group->appendChild(
             new ItemModule("passwordIsRequiredToWakeUpTheMonitor",
-                           tr("Password is required to wake up the monitor"),
+                           tr("Unlocking is required to wake up the monitor"),
                            [this](ModuleObject *module) -> QWidget * {
                                Q_UNUSED(module)
                                DSwitchButton *wakeDisplayNeedPassword = new DSwitchButton();
-                               wakeDisplayNeedPassword->setChecked(m_model->screenBlackLock());
+                               wakeDisplayNeedPassword->setChecked(m_model->screenBlackLock()
+                                                                   && !m_model->isNoPasswdLogin());
+                               wakeDisplayNeedPassword->setDisabled(m_model->isNoPasswdLogin());
                                connect(m_model,
                                        &PowerModel::screenBlackLockChanged,
                                        wakeDisplayNeedPassword,
-                                       &DSwitchButton::setChecked);
+                                       [wakeDisplayNeedPassword, this](bool checked) {
+                                           wakeDisplayNeedPassword->setChecked(
+                                                   checked && !m_model->isNoPasswdLogin());
+                                       });
+
                                connect(wakeDisplayNeedPassword,
                                        &DSwitchButton::checkedChanged,
                                        this,
                                        &GeneralModule::requestSetWakeDisplay);
+                               connect(m_model,
+                                       &PowerModel::noPasswdLoginChanged,
+                                       wakeDisplayNeedPassword,
+                                       &DSwitchButton::setDisabled);
                                return wakeDisplayNeedPassword;
                            }));
 }

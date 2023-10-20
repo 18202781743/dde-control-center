@@ -1,13 +1,14 @@
 //SPDX-FileCopyrightText: 2018 - 2023 UnionTech Software Technology Co., Ltd.
 //
 //SPDX-License-Identifier: GPL-3.0-or-later
-#include "widgets/finger/addfingedialog.h"
+#include "widgets/finger/addfingerdialog.h"
 #include "fingerdetailwidget.h"
 #include "charamangermodel.h"
 
 #include <DApplicationHelper>
 #include <DFontSizeManager>
 #include <DTipLabel>
+#include <DIconTheme>
 
 #include <QVBoxLayout>
 #include <QLabel>
@@ -16,6 +17,7 @@
 #include <QSize>
 
 using namespace DCC_NAMESPACE;
+DGUI_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
 
 FingerDetailWidget::FingerDetailWidget(QWidget *parent)
@@ -47,7 +49,7 @@ void FingerDetailWidget::initFingerUI()
     setFocusPolicy(Qt::FocusPolicy::ClickFocus);
 
     //指纹界面操作
-    connect(m_fingerWidget, &FingerWidget::requestAddThumbs, this, &FingerDetailWidget::showFingeDisclaimer);
+    connect(m_fingerWidget, &FingerWidget::requestAddThumbs, this, &FingerDetailWidget::showFingerDisclaimer);
     connect(m_fingerWidget, &FingerWidget::requestDeleteFingerItem, this, &FingerDetailWidget::requestDeleteFingerItem);
     connect(m_fingerWidget, &FingerWidget::requestRenameFingerItem, this, &FingerDetailWidget::requestRenameFingerItem);
     connect(m_fingerWidget, &FingerWidget::noticeEnrollCompleted, this, &FingerDetailWidget::noticeEnrollCompleted);
@@ -74,10 +76,10 @@ void FingerDetailWidget::initNotFingerDevice()
     connect(Dtk::Gui::DGuiApplicationHelper::instance(), &Dtk::Gui::DGuiApplicationHelper::themeTypeChanged,
     this, [ = ](Dtk::Gui::DGuiApplicationHelper::ColorType themeType) {
         Q_UNUSED(themeType);
-        pNotDevice->setPixmap(QIcon::fromTheme(getDisplayPath()).pixmap(64, 64));
+        pNotDevice->setPixmap(DIconTheme::findQIcon(getDisplayPath()).pixmap(64, 64));
 
     });
-    pNotDevice->setPixmap(QIcon::fromTheme(getDisplayPath()).pixmap(64, 64));
+    pNotDevice->setPixmap(DIconTheme::findQIcon(getDisplayPath()).pixmap(64, 64));
     pNotDevice->setAlignment(Qt::AlignHCenter);
 
 
@@ -113,15 +115,15 @@ void FingerDetailWidget::showDeviceStatus(bool hasDevice)
     }
 }
 
-void FingerDetailWidget::showAddFingeDialog(const QString &name, const QString &thumb)
+void FingerDetailWidget::showAddFingerDialog(const QString &name, const QString &thumb)
 {
-    AddFingeDialog *dlg = new AddFingeDialog(thumb, this);
-    connect(dlg, &AddFingeDialog::requestEnrollThumb, this, [ = ] {
+    AddFingerDialog *dlg = new AddFingerDialog(thumb, this);
+    connect(dlg, &AddFingerDialog::requestEnrollThumb, this, [ = ] {
         dlg->deleteLater();
-        showAddFingeDialog(name, thumb);
+        showAddFingerDialog(name, thumb);
     });
-    connect(dlg, &AddFingeDialog::requestStopEnroll, this, &FingerDetailWidget::requestStopEnroll);
-    connect(dlg, &AddFingeDialog::requesetCloseDlg, dlg, [ = ](const QString & userName) {
+    connect(dlg, &AddFingerDialog::requestStopEnroll, this, &FingerDetailWidget::requestStopEnroll);
+    connect(dlg, &AddFingerDialog::requesetCloseDlg, dlg, [ = ](const QString & userName) {
         Q_EMIT noticeEnrollCompleted(userName);
         if (m_disclaimer != nullptr) {
             m_disclaimer->close();
@@ -170,7 +172,7 @@ void FingerDetailWidget::setFingerModel(CharaMangerModel *model)
     showDeviceStatus(model->fingerVaild());
 }
 
-void FingerDetailWidget::showFingeDisclaimer(const QString &name, const QString &thumb)
+void FingerDetailWidget::showFingerDisclaimer(const QString &name, const QString &thumb)
 {
     if (m_disclaimer != nullptr) {
         return;
@@ -180,7 +182,7 @@ void FingerDetailWidget::showFingeDisclaimer(const QString &name, const QString 
 
     connect(m_disclaimer, &FingerDisclaimer::requestShowFingeInfoDialog, this, [ = ] {
         m_disclaimer->setVisible(false);
-        showAddFingeDialog(name, thumb);
+        showAddFingerDialog(name, thumb);
     });
 
     connect(m_disclaimer, &FingerDisclaimer::requesetCloseDlg, this, [ = ] {

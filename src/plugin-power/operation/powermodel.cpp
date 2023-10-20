@@ -27,6 +27,7 @@ PowerModel::PowerModel(QObject *parent)
     , m_bPowerSavingModeAutoWhenQuantifyLow(0)
     , m_bPowerSavingModeAuto(false)
     , m_dPowerSavingModeLowerBrightnessThreshold(0)
+    , m_dPowerSavingModeAutoBatteryPercentage(0)
     , m_nLinePowerPressPowerBtnAction(0)
     , m_nLinePowerLidClosedAction(0)
     , m_nBatteryPressPowerBtnAction(0)
@@ -204,6 +205,15 @@ void PowerModel::setPowerSavingModeLowerBrightnessThreshold(uint dPowerSavingMod
     }
 }
 
+void PowerModel::setPowerSavingModeAutoBatteryPercentage(uint dPowerSavingModeAutoBatteryPercentage)
+{
+    if (dPowerSavingModeAutoBatteryPercentage != m_dPowerSavingModeAutoBatteryPercentage) {
+        m_dPowerSavingModeAutoBatteryPercentage = dPowerSavingModeAutoBatteryPercentage;
+
+        Q_EMIT powerSavingModeAutoBatteryPercentageChanged(dPowerSavingModeAutoBatteryPercentage);
+    }
+}
+
 void PowerModel::setLinePowerPressPowerBtnAction(int nLinePowerPressPowerBtnAction)
 {
     if (nLinePowerPressPowerBtnAction != m_nLinePowerPressPowerBtnAction) {
@@ -334,5 +344,14 @@ void PowerModel::setShutdown(bool shutdown)
         m_isShutdown = shutdown;
 
         Q_EMIT shutdownChanged(shutdown);
+    }
+}
+
+void PowerModel::setNoPasswdLogin(bool value)
+{
+    if (value != m_noPasswdLogin) {
+        m_noPasswdLogin = value;
+
+        Q_EMIT noPasswdLoginChanged(value);
     }
 }

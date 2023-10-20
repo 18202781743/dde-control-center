@@ -10,6 +10,7 @@
 #include <DDialog>
 #include <DDialogCloseButton>
 #include <DStyle>
+#include <DIconTheme>
 
 #include <QDebug>
 #include <QDir>
@@ -26,6 +27,7 @@
 #include <QVBoxLayout>
 #include <QWidget>
 
+DGUI_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
 DCORE_USE_NAMESPACE
 using namespace DCC_NAMESPACE;
@@ -83,7 +85,7 @@ AvatarListDialog::AvatarListDialog(User *usr, AccountsWorker *worker, QWidget *p
         if (item.isLoader) {
             DStandardItem *avatarItem = new DStandardItem(item.name);
             avatarItem->setFontSize(DFontSizeManager::SizeType::T5);
-            avatarItem->setIcon(QIcon::fromTheme(item.icon));
+            avatarItem->setIcon(DIconTheme::findQIcon(item.icon));
             avatarItem->setData(item.role, AvatarItemNameRole);
             m_avatarSelectItemModel->appendRow(avatarItem);
 
@@ -194,8 +196,8 @@ AvatarListDialog::AvatarListDialog(User *usr, AccountsWorker *worker, QWidget *p
             &CustomAddAvatarWidget::requestUpdateCustomWidget,
             this,
             [avatarSelectWidget, this](const QString &path) {
-                avatarSelectWidget->setCurrentWidget(m_avatarFrames[Custom]);
                 m_currentSelectAvatarWidget = m_avatarFrames[Custom];
+                avatarSelectWidget->setCurrentIndex(3);
                 m_currentSelectAvatarWidget->getCurrentListView()->requestAddCustomAvatar(path);
             });
 

@@ -6,6 +6,7 @@
 
 #include <QObject>
 #include <DDBusInterface>
+#include <optional>
 class QDBusInterface;
 class QDBusMessage;
 using Dtk::Core::DDBusInterface;
@@ -74,9 +75,15 @@ public:
     Q_PROPERTY(bool PowerSavingModeAutoWhenBatteryLow READ powerSavingModeAutoWhenBatteryLow WRITE setPowerSavingModeAutoWhenBatteryLow NOTIFY PowerSavingModeAutoWhenBatteryLowChanged)
     bool powerSavingModeAutoWhenBatteryLow();
     void setPowerSavingModeAutoWhenBatteryLow(bool value);
+
     Q_PROPERTY(uint PowerSavingModeBrightnessDropPercent READ powerSavingModeBrightnessDropPercent WRITE setPowerSavingModeBrightnessDropPercent NOTIFY PowerSavingModeBrightnessDropPercentChanged)
     uint powerSavingModeBrightnessDropPercent();
     void setPowerSavingModeBrightnessDropPercent(uint value);
+
+    Q_PROPERTY(uint PowerSavingModeAutoBatteryPercent READ powerSavingModeAutoBatteryPercent WRITE setPowerSavingModeAutoBatteryPercent NOTIFY PowerSavingModeAutoBatteryPercentChanged)
+    uint powerSavingModeAutoBatteryPercent();
+    void setPowerSavingModeAutoBatteryPercent(uint value);
+
     Q_PROPERTY(QString Mode READ mode NOTIFY ModeChanged)
     QString mode();
     Q_PROPERTY(bool PowerSavingModeAuto READ powerSavingModeAuto WRITE setPowerSavingModeAuto NOTIFY PowerSavingModeAutoChanged)
@@ -89,6 +96,12 @@ public:
     double batteryCapacity();
     Q_PROPERTY(int MaxBacklightBrightness READ batteryCapacity)
     int maxBacklightBrightness();
+
+    // USER
+    Q_PROPERTY(bool NoPasswdLogin READ noPasswdLogin NOTIFY noPasswdLoginChanged)
+    bool noPasswdLogin();
+
+    std::optional<QString> findUserById();
 
 signals:
     // Power
@@ -117,8 +130,10 @@ signals:
     void BatteryPercentageChanged(double value) const;
     void PowerSavingModeAutoWhenBatteryLowChanged(bool value) const;
     void PowerSavingModeBrightnessDropPercentChanged(uint value) const;
+    void PowerSavingModeAutoBatteryPercentChanged(uint value) const;
     void ModeChanged(const QString &value) const;
     void BatteryCapacityChanged(double value) const;
+    void noPasswdLoginChanged(bool value);
 
 public slots:
     // SystemPower
@@ -131,6 +146,8 @@ public slots:
     bool login1ManagerCanHibernate();
 
 private:
+    DDBusInterface *m_accountRootInter;
+    DDBusInterface *m_currentAccountInter;
     DDBusInterface *m_powerInter;
     DDBusInterface *m_sysPowerInter;
     DDBusInterface *m_login1ManagerInter;
