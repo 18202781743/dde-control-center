@@ -1,10 +1,10 @@
-// SPDX-FileCopyrightText: 2024 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2024 - 2026 UnionTech Software Technology Co., Ltd.
 // SPDX-License-Identifier: GPL-3.0-or-later
-import QtQuick 2.15
-import QtQuick.Controls 2.0
+import QtQuick
+import QtQuick.Controls
 
 import org.deepin.dcc 1.0
-import QtQuick.Layouts 1.15
+import QtQuick.Layouts
 import Qt.labs.platform 1.1
 import Qt.labs.qmlmodels 1.2
 

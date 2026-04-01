@@ -1,10 +1,10 @@
-// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2025 - 2026 UnionTech Software Technology Co., Ltd.
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-import QtQuick 2.15
-import QtQuick.Window 2.15
-import QtQuick.Controls 2.3
-import QtQuick.Layouts 1.15
+import QtQuick
+import QtQuick.Window
+import QtQuick.Controls
+import QtQuick.Layouts
 import QtQuick.Dialogs
 import Qt5Compat.GraphicalEffects
 
